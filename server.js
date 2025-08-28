@@ -1,8 +1,10 @@
-// Load environment variables: prefer .env if present, otherwise config.env
 import dotenv from 'dotenv';
-import fs from 'fs';
-const envPath = fs.existsSync('./.env') ? './.env' : './config.env';
-dotenv.config({ path: envPath });
+
+// Only load .env file when running locally (not in production/Render)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: './.env' });
+}
+
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
