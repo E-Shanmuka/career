@@ -213,12 +213,20 @@ const sessionConfig = {
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://career-z6lb.onrender.com'  // ✅ allow your deployed frontend
+  ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   exposedHeaders: ['set-cookie']
 };
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ handle preflight
+
 
 // Enable CORS for all routes
 app.use(cors(corsOptions));
