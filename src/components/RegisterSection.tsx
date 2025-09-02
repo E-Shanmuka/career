@@ -8,7 +8,7 @@ import OTPVerification from './OTPVerification';
 const API_URL =
   import.meta.env.MODE === 'development'
     ? 'http://localhost:3000/api/v1'
-    : 'https://your-production-domain.com/api/v1';
+    : 'https://career-z6lb.onrender.com/api/v1';
 
 interface FormData {
   name: string;
