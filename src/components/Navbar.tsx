@@ -166,12 +166,24 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         <div 
-          className={`md:hidden transition-all duration-300 overflow-hidden bg-white border-t ${
-            isOpen ? 'max-h-96 py-4' : 'max-h-0'
+          className={`md:hidden transition-all duration-300 bg-white border-t ${
+            isOpen 
+              ? 'max-h-[calc(100vh-4rem)] py-4 overflow-y-auto' 
+              : 'max-h-0 overflow-hidden'
           }`}
         >
           <div className="flex flex-col space-y-3">
             {navItems.map((item) => renderNavItem(item, true))}
+            {/* Mobile: Login right after nav items (after 'About') */}
+            {!isAuthenticated && (
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-50"
+                onClick={() => setIsOpen(false)}
+              >
+                Login
+              </Link>
+            )}
             {user?.isPremium && (
               <Link
                 to="/premium"
@@ -209,13 +221,6 @@ const Navbar = () => {
                 </>
               ) : (
                 <div className="flex flex-col space-y-3">
-                  <Link 
-                    to="/login" 
-                    className="px-4 py-2 text-sm font-medium text-center text-gray-700 hover:bg-gray-50 rounded-lg transition-colors border border-gray-300"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Login
-                  </Link>
                   <Link 
                     to="/register" 
                     className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 text-center shadow-md"
