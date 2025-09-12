@@ -222,6 +222,9 @@ const allowedOrigins = new Set([
 if (process.env.FRONTEND_URL) {
   allowedOrigins.add(process.env.FRONTEND_URL);
 }
+if (process.env.FRONTEND_URL_PROD) {
+  allowedOrigins.add(process.env.FRONTEND_URL_PROD);
+}
 
 const corsOptions = {
   origin: (origin, callback) => {
