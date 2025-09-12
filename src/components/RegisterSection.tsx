@@ -27,6 +27,8 @@ const RegisterSection: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   const [tempUserData, setTempUserData] = useState<FormData | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('Registration successful! You can now sign in.');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -103,7 +105,8 @@ const RegisterSection: React.FC = () => {
       console.log('[UI] Verify OTP response ←', response.status, response.data);
       
       if (response.data.success) {
-        navigate('/login');
+        setSuccessMsg('Account verified successfully! You can now sign in.');
+        setShowSuccess(true);
         return true;
       }
       return false;
@@ -153,6 +156,39 @@ const RegisterSection: React.FC = () => {
           onResend={handleResendOTP}
           onBack={handleBackToRegister}
         />
+        {/* Success Card Modal */}
+        {showSuccess && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center relative">
+              <button
+                type="button"
+                onClick={() => { setShowSuccess(false); navigate('/login'); }}
+                className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+                aria-label="Close"
+              >
+                {/* simple X icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                  <path fillRule="evenodd" d="M6.225 4.811a.75.75 0 0 1 1.06 0L12 9.525l4.715-4.714a.75.75 0 1 1 1.06 1.06L13.06 10.586l4.715 4.714a.75.75 0 1 1-1.06 1.061L12 11.646l-4.715 4.715a.75.75 0 1 1-1.06-1.061l4.714-4.714-4.714-4.714a.75.75 0 0 1 0-1.06z" clipRule="evenodd" />
+                </svg>
+              </button>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+                {/* Check icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+                  <path fillRule="evenodd" d="M2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75 2.25 17.385 2.25 12zm13.036-2.286a.75.75 0 1 0-1.072-1.048l-4.34 4.44-1.628-1.63a.75.75 0 1 0-1.063 1.06l2.167 2.167a.75.75 0 0 0 1.078-.006l4.858-4.983z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">Success</h3>
+              <p className="mt-2 text-sm text-gray-600">{successMsg}</p>
+              <button
+                type="button"
+                onClick={() => { setShowSuccess(false); navigate('/login'); }}
+                className="mt-5 w-full rounded-lg bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700 transition"
+              >
+                Go to Login
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

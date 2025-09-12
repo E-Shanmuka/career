@@ -18,6 +18,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<User>;
+  googleLogin: (idToken: string) => Promise<User>;
   register: (userData: {
     name: string;
     email: string;
@@ -135,6 +136,35 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const googleLogin = async (idToken: string): Promise<User> => {
+    try {
+      const { data } = await api.post('/api/v1/auth/google-auth', { token: idToken });
+      // Backend returns { status, token, data: { user } }
+      const token = (data as any)?.token ?? (data as any)?.data?.token;
+      const user = (data as any)?.data?.user;
+      
+      if (!token || !user) throw new Error('Invalid Google login response');
+      
+      setToken(token);
+      setUser(user);
+      setIsAuthenticated(true);
+      
+      localStorage.setItem('token', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      return user;
+    } catch (error) {
+      console.error('Google login failed:', error);
+      const serverMsg = (error as any)?.response?.data?.message || 'Google login failed';
+      // Clear any partial auth state on failure
+      localStorage.removeItem('token');
+      delete api.defaults.headers.common['Authorization'];
+      setUser(null);
+      setIsAuthenticated(false);
+      throw new Error(serverMsg);
+    }
+  };
+
   const register = async (userData: {
     name: string;
     email: string;
@@ -207,6 +237,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isAuthenticated,
     isLoading,
     login,
+    googleLogin,
     register,
     logout,
     updateUser,

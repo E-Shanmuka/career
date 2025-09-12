@@ -205,6 +205,29 @@ export const updateBookingStatus = async (req, res) => {
       adminNotes: message || adminNotes || undefined,
     });
 
+    // Also notify admin about the status change (approved/rejected/pending...)
+    try {
+      const admin = await User.findOne({ role: 'admin' });
+      if (admin?.email) {
+        const adminEmail = new Email(
+          { email: admin.email, name: admin.name || 'Admin' },
+          `${req.protocol}://${req.get('host')}/admin#appointments`
+        );
+        await adminEmail.send('bookingStatusUpdate', `Booking ${String(status).charAt(0).toUpperCase() + String(status).slice(1)}`, {
+          firstName: (admin.name || 'Admin').split(' ')[0],
+          status,
+          date: booking.date ? booking.date.toDateString() : '',
+          time: booking.timeSlot,
+          bookingId: booking._id,
+          meetingLink: meetingLink || booking.meetingLink,
+          adminNotes: message || adminNotes || undefined,
+        });
+      }
+    } catch (e) {
+      // Do not fail the response if admin email fails
+      console.warn('Admin booking status email failed:', e?.message);
+    }
+
     res.status(200).json({
       status: 'success',
       data: { booking }
